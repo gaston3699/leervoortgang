@@ -2,7 +2,7 @@
    - De app zelf: eerst online proberen (zo komt een nieuwe versie meteen binnen), anders de bewaarde kopie.
    - Lettertypes van Google Fonts: bewaarde kopie gebruiken.
    - Google Drive en aanmelden bij Google: nooit bewaren, altijd rechtstreeks. */
-const CACHE = 'leervoortgang-v1';
+const CACHE = 'leervoortgang-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
@@ -31,8 +31,11 @@ self.addEventListener('fetch', e => {
 
   if (url.origin !== self.location.origin) return;
   if (url.pathname.includes('/drive/') || url.pathname.includes('/upload/')) return;
+  if (url.searchParams.has('versiecheck')) return;
 
-  e.respondWith(fetch(req).then(res => {
+  // cache: 'no-cache' = altijd bij GitHub navragen of er een nieuwere versie is (GitHub laat browsers anders tot 10 minuten een oude kopie gebruiken).
+  const net = req.mode === 'navigate' ? fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' }) : fetch(req, { cache: 'no-cache' });
+  e.respondWith(net.then(res => {
     if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
     return res;
   }).catch(() => caches.match(req, { ignoreSearch: true })

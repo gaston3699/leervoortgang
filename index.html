@@ -1865,9 +1865,43 @@ document.addEventListener('keydown',ev=>{
 
 /* ---------- Banner, zijbalk, hoofdweergave ---------- */
 function needsBackup(){if(SY.state==='ok')return false;return !S.lastBackup||daysBetween(S.lastBackup,today())>=14;}
+/* ---------- Nieuwe versie van de app ----------
+   APP_VERSION moet bij elke aanpassing veranderen. De app kijkt geregeld of op GitHub een andere versie staat.
+   Dan verschijnt een melding; komt de gebruiker terug naar de app en is er niets half ingevuld, dan werkt ze zichzelf bij.
+   Bijwerken is veilig: alles staat al op het toestel, en wat nog naar Drive moest, gaat na het herladen mee. */
+const APP_VERSION='2026-11-17.3';
+let newVersion=null;
+async function checkUpdate(){
+  if(!WEB||newVersion||navigator.onLine===false)return;
+  try{
+    const r=await fetch('./index.html?versiecheck='+Date.now(),{cache:'no-store'});
+    if(!r.ok)return;
+    const m=(await r.text()).match(/const APP_VERSION='([^']+)'/);
+    if(m&&m[1]!==APP_VERSION){newVersion=m[1];renderBanner();}
+  }catch(e){}
+}
+function safeToReload(){
+  const a=document.activeElement;
+  return !ui.panel&&!(a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA')&&a.value);
+}
+async function updateNow(){
+  try{if(SY.col&&SY.ready&&!SY.busy)await Promise.race([pushNow(),new Promise(r=>setTimeout(r,4000))]);}catch(e){}
+  location.reload();
+}
+if(WEB){
+  setTimeout(checkUpdate,5000);
+  setInterval(()=>{if(document.visibilityState==='visible')checkUpdate();},10*60*1000);
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState!=='visible')return;
+    if(newVersion&&safeToReload())updateNow();else checkUpdate();
+  });
+}
 function renderBanner(){
   const b=$('#banner');b.replaceChildren();
-  if(!storageOK){
+  if(newVersion){
+    b.append(h('div',{class:'banner info',role:'status'},h('p',{text:'Er is een nieuwe versie van de app. Je gegevens blijven gewoon bewaard.'}),
+      h('button',{type:'button',class:'btn small primary',onClick:updateNow},'Nu bijwerken')));
+  }else if(!storageOK){
     b.append(h('div',{class:'banner warn',role:'alert'},h('p',{text:'Deze browser bewaart de gegevens niet. Alles verdwijnt zodra je de pagina sluit. Maak regelmatig een back-up.'}),
       h('button',{type:'button',class:'btn small',onClick:()=>{ui.view='inst';render();}},'Naar back-up')));
   }else if(migrNote>0&&!ui.hideMigr){
