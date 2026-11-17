@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#2c3748">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap">
 <style>
-/* Concept: een rustige werktafel in koel leisteen. Alleen de vier niveaukleuren (rood, oranje, groen, blauw) zijn kleurrijk, zodat ze meteen opvallen. */
+/* Concept: een rustige werktafel in koel leisteen. Alleen de vijf niveaukleuren (rood, oranje, geel, groen, blauw) zijn kleurrijk, zodat ze meteen opvallen. */
 :root{
   --font-body:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --font-head:'Space Grotesk','Atkinson Hyperlegible',system-ui,sans-serif;
@@ -18,6 +18,7 @@
   --n2:#e98a2c; --n2-on:#2b1600; --n2-soft:#fdeedb;
   --n3:#2c7a3d; --n3-on:#ffffff; --n3-soft:#dff2e3;
   --n4:#2a63c6; --n4-on:#ffffff; --n4-soft:#e0eaff;
+  --n5:#f2c511; --n5-on:#2b2200; --n5-soft:#fdf4cc;
   --warn-bg:#fff3d1; --warn-line:#dcb74e; --info-bg:#e4edf7; --info-line:#a9bfd9;
   --shadow:0 10px 40px rgba(18,28,40,.22);
 }
@@ -29,6 +30,7 @@
     --n2:#f4a553; --n2-on:#2b1600; --n2-soft:#3c2b18;
     --n3:#62c673; --n3-on:#08210e; --n3-soft:#183120;
     --n4:#7ca8f4; --n4-on:#08172f; --n4-soft:#1a2a42;
+  --n5:#f5d54a; --n5-on:#2b2200; --n5-soft:#3a3213;
     --warn-bg:#3a3014; --warn-line:#8c7425; --info-bg:#1d2b3b; --info-line:#3f5873;
     --shadow:0 10px 40px rgba(0,0,0,.55);
     color-scheme:dark;
@@ -41,6 +43,7 @@
   --n2:#f4a553; --n2-on:#2b1600; --n2-soft:#3c2b18;
   --n3:#62c673; --n3-on:#08210e; --n3-soft:#183120;
   --n4:#7ca8f4; --n4-on:#08172f; --n4-soft:#1a2a42;
+  --n5:#f5d54a; --n5-on:#2b2200; --n5-soft:#3a3213;
   --warn-bg:#3a3014; --warn-line:#8c7425; --info-bg:#1d2b3b; --info-line:#3f5873;
   --shadow:0 10px 40px rgba(0,0,0,.55);
   color-scheme:dark;
@@ -360,6 +363,16 @@ aside h2{font-size:1.15rem}
 .tile.n2{background:var(--n2);color:var(--n2-on)}
 .tile.n3{background:var(--n3);color:var(--n3-on)}
 .tile.n4{background:var(--n4);color:var(--n4-on)}
+/* Niveau geel (middelmatig), code 5 */
+.seg.n5,.dot.n5{background:var(--n5)}
+.nv.n5{background:var(--n5);color:var(--n5-on)}.nv.n5 b{background:var(--n5-on);color:var(--n5)}
+.cell.n5{background:var(--n5);color:var(--n5-on)}
+.nvbtn.n5 b{background:var(--n5);color:var(--n5-on)}
+.nvbtn[aria-pressed="true"].n5{background:var(--n5-soft);border-color:var(--n5)}
+.qb.n5{border-color:var(--n5)}.qb.n5[aria-pressed="true"]{background:var(--n5);color:var(--n5-on)}
+.lvb.n5{border-color:var(--n5);background:var(--n5-soft)}
+.lvb[aria-pressed="true"].n5{background:var(--n5);color:var(--n5-on)}
+.tile.n5{background:var(--n5);color:var(--n5-on)}
 .tile.none{background:transparent;border:2px dashed var(--line);color:var(--muted);box-shadow:none}
 
 /* Domeinen bovenaan */
@@ -602,7 +615,13 @@ const NIV=[null,
  {n:1,naam:'Rood',label:'Veel ondersteuning'},
  {n:2,naam:'Oranje',label:'Wat ondersteuning'},
  {n:3,naam:'Groen',label:'Goed'},
- {n:4,naam:'Blauw',label:'Zeer goed'}];
+ {n:4,naam:'Blauw',label:'Zeer goed'},
+ {n:5,naam:'Geel',label:'Middelmatig'}];
+/* Volgorde van laag naar hoog. Geel kwam later en heeft daarom code 5, zodat bestaande gegevens (1–4) geldig blijven.
+   Op het scherm is de nummering 1 rood, 2 oranje, 3 geel, 4 groen, 5 blauw. */
+const LV=[1,2,5,3,4];
+LV.forEach((n,i)=>{NIV[n].nr=i+1;});
+const rank=n=>LV.indexOf(n)+1;
 
 const DEF_R=[
  ['r1','Begrip ontbreekt: snapt het principe nog niet'],['r2','Tafels of sommen tot 20 niet paraat'],
@@ -734,7 +753,7 @@ function cleanEntries(arr){
   if(!Array.isArray(arr))return [];
   const out=[];
   for(const e of arr){
-    if(!e||typeof e.d!=='string'||!ISO_RE.test(e.d)||!(e.n>=1&&e.n<=4))continue;
+    if(!e||typeof e.d!=='string'||!ISO_RE.test(e.d)||!(e.n>=1&&e.n<=5))continue;
     out.push({d:e.d,n:Math.round(e.n),
       r:Array.isArray(e.r)?e.r.filter(x=>typeof x==='string').slice(0,20):[],
       t:typeof e.t==='string'?e.t.slice(0,500):'',
@@ -1100,7 +1119,7 @@ const entries=(kid,gk)=>{const s=S.scores[kid];return (s&&s[gk])||[];};
 const cur=(kid,gk)=>{const e=entries(kid,gk);return e.length?e[e.length-1]:null;};
 function trend(kid,gk){
   const e=entries(kid,gk);if(e.length<2)return null;
-  const d=e[e.length-1].n-e[e.length-2].n;return d>0?1:d<0?-1:0;
+  const d=rank(e[e.length-1].n)-rank(e[e.length-2].n);return d>0?1:d<0?-1:0;
 }
 function newTs(arr){let t=Date.now();const used=new Set(arr.map(e=>e.ts));while(used.has(t))t++;return t;}
 function putEntry(kid,gk,entry){
@@ -1119,7 +1138,7 @@ function removeEntry(kid,gk,ts){
 const rLabel=id=>{const r=S.redenen.wis.find(x=>x.id===id);return r?r.label:'';};
 const rLabels=e=>e?e.r.map(rLabel).filter(Boolean):[];
 function childCounts(kid){
-  const c=[0,0,0,0,0];
+  const c=[0,0,0,0,0,0];
   GOALS.forEach(g=>{const e=cur(kid,g.key);if(e)c[e.n]++;});
   return c;
 }
@@ -1222,7 +1241,7 @@ function toast(msg,act){
 function focusKey(k){if(!k)return;const el=document.querySelector('[data-fk="'+k.replace(/"/g,'\\"')+'"]');if(el)el.focus();}
 
 /* ---------- Kleine bouwstenen ---------- */
-function nvChip(n,small){return h('span',{class:'nv n'+n+(small?' sm':'')},h('b',{text:String(n)}),NIV[n].label);}
+function nvChip(n,small){return h('span',{class:'nv n'+n+(small?' sm':'')},h('b',{text:String(NIV[n].nr)}),NIV[n].label);}
 function badge(n,count){return h('span',{class:'nv sm n'+n,title:NIV[n].naam+': '+count},h('b',{text:String(count)}),h('span',{class:'sr',text:NIV[n].naam}));}
 function dots(kid,gk){
   const e=entries(kid,gk);if(!e.length)return null;
@@ -1234,11 +1253,11 @@ function trendEl(tr){
   return h('span',{class:'trend',title:w},g,h('span',{class:'sr',text:w}));
 }
 function bar(counts){
-  return h('div',{class:'bar',role:'img','aria-label':[1,2,3,4].map(n=>NIV[n].naam+' '+counts[n]).join(', ')},
-    [1,2,3,4].map(n=>counts[n]?h('span',{class:'seg n'+n,style:{flexGrow:String(counts[n])}}):null));
+  return h('div',{class:'bar',role:'img','aria-label':LV.map(n=>NIV[n].naam+' '+(counts[n]||0)).join(', ')},
+    LV.map(n=>counts[n]?h('span',{class:'seg n'+n,style:{flexGrow:String(counts[n])}}):null));
 }
 function legend(){
-  return h('div',{class:'legend'},[1,2,3,4].map(n=>nvChip(n,true)),h('span',{class:'nv sm none'},'Niet ingevuld'));
+  return h('div',{class:'legend'},LV.map(n=>nvChip(n,true)),h('span',{class:'nv sm none'},'Niet ingevuld'));
 }
 
 function avatar(name,size){
@@ -1246,8 +1265,8 @@ function avatar(name,size){
   return h('span',{class:'av a'+(hs%6+1)+(size==='l'?' lg':size==='s'?' sm':''),'aria-hidden':'true',text:(name.trim()[0]||'?').toUpperCase()});
 }
 function miniBar(cnt,total,withRest){
-  const sum=cnt[1]+cnt[2]+cnt[3]+cnt[4];
-  const segs=[1,2,3,4].map(n=>cnt[n]?h('i',{class:'seg n'+n,style:{flexGrow:String(cnt[n])}}):null);
+  const sum=LV.reduce((a,n)=>a+(cnt[n]||0),0);
+  const segs=LV.map(n=>cnt[n]?h('i',{class:'seg n'+n,style:{flexGrow:String(cnt[n])}}):null);
   if(withRest&&total>sum)segs.push(h('i',{class:'seg rest',style:{flexGrow:String(total-sum)}}));
   return h('span',{class:'mini','aria-hidden':'true'},segs);
 }
@@ -1262,7 +1281,7 @@ function emptyState(){
     h('ol',null,
       h('li',{text:'Voeg links de voornaam van een leerling toe.'}),
       h('li',{text:'Klik de naam aan en kies een domein, bijvoorbeeld Getallen.'}),
-      h('li',{text:'Klik bij elk leerplandoel het niveau van 1 (rood) tot 4 (blauw).'}),
+      h('li',{text:'Klik bij elk leerplandoel het niveau van 1 (rood) tot 5 (blauw).'}),
       h('li',{text:'Bij rood of oranje kies je meteen waarom het niet goed lukt.'}),
       h('li',{text:'Ga naar Klasoverzicht om te zien wie extra ondersteuning nodig heeft bij een doel.'})),
     S.kinderen.length?null:h('button',{type:'button',class:'btn',onClick:()=>{makeDemo();persist();ui.kind=sorted()[0].id;render();}},'Voorbeeldklas laden'));
@@ -1302,9 +1321,9 @@ function viewKind(){
   }
   head.append(act);
   root.append(head);
-  const c=childCounts(k.id);const filled=c[1]+c[2]+c[3]+c[4];
+  const c=childCounts(k.id);const filled=LV.reduce((a,n)=>a+c[n],0);
   root.append(h('div',{class:'tiles'},
-    [1,2,3,4].map(n=>h('div',{class:'tile n'+n},h('b',{text:String(c[n])}),h('span',{text:NIV[n].naam+' · '+NIV[n].label}))),
+    LV.map(n=>h('div',{class:'tile n'+n},h('b',{text:String(c[n])}),h('span',{text:NIV[n].naam+' · '+NIV[n].label}))),
     h('div',{class:'tile none'},h('b',{text:String(GOALS.length-filled)}),h('span',{text:'Niet ingevuld'}))));
   root.append(h('div',{class:'domtabs',role:'group','aria-label':'Domein'},DOMEINEN.map(d=>{
     const n=helpInDomain(k.id,d);
@@ -1321,9 +1340,9 @@ function viewKind(){
     }},allOpen?'Alles dichtklappen':'Alles openklappen')));
   dom.ll.forEach(([id])=>{
     const l=LLBY[id];const open=ui.open.has(id);
-    const cnt=[0,0,0,0,0];
+    const cnt=[0,0,0,0,0,0];
     l.goals.forEach(g=>{const e=cur(k.id,g.key);if(e)cnt[e.n]++;});
-    const done=cnt[1]+cnt[2]+cnt[3]+cnt[4];
+    const done=LV.reduce((a,n)=>a+cnt[n],0);
     const head=h('button',{type:'button',class:'llh','aria-expanded':String(open),'aria-controls':open?'ll-'+id:null,'data-fk':'ll:'+id,
       onClick:()=>{if(open)ui.open.delete(id);else ui.open.add(id);render();focusKey('ll:'+id);}},
       h('span',{class:'chev','aria-hidden':'true',text:'▸'}),
@@ -1340,12 +1359,12 @@ function viewKind(){
 function goalRow(k,g){
   const e=cur(k.id,g.key);const t=today();const hk=k.id+'|'+g.key;const hopen=ui.hist.has(hk);
   const lv=h('div',{class:'lv',role:'group','aria-label':'Niveau voor '+g.tekst},
-    [1,2,3,4].map(n=>h('button',{type:'button',class:'lvb n'+n,'aria-pressed':String(!!e&&e.n===n),
-      'aria-label':'Niveau '+n+', '+NIV[n].naam+', '+NIV[n].label,title:NIV[n].naam+': '+NIV[n].label,'data-fk':'lv:'+g.key+':'+n,
+    LV.map(n=>h('button',{type:'button',class:'lvb n'+n,'aria-pressed':String(!!e&&e.n===n),
+      'aria-label':'Niveau '+NIV[n].nr+', '+NIV[n].naam+', '+NIV[n].label,title:NIV[n].naam+': '+NIV[n].label,'data-fk':'lv:'+g.key+':'+n,
       onClick:()=>{
         const ne=setLevel(k.id,g.key,n);render();focusKey('lv:'+g.key+':'+n);
-        toast('Resultaat toegevoegd: niveau '+n,{label:'Ongedaan maken',fn:()=>{removeEntry(k.id,g.key,ne.ts);persist();render();focusKey('lv:'+g.key+':'+n);}});
-      }},String(n))));
+        toast('Resultaat toegevoegd: '+NIV[n].naam.toLowerCase(),{label:'Ongedaan maken',fn:()=>{removeEntry(k.id,g.key,ne.ts);persist();render();focusKey('lv:'+g.key+':'+n);}});
+      }},String(NIV[n].nr))));
   const wrap=h('div',{class:'grow'});
   wrap.append(h('div',{class:'gmain'},
     h('button',{type:'button',class:'gtext','data-fk':'gt:'+g.key,title:'Nieuw resultaat met notitie of datum',onClick:()=>openPanel(k.id,g.key,'gt:'+g.key)},g.tekst),
@@ -1407,7 +1426,7 @@ function viewKlas(){
 }
 function lijst(){
   const g=GBY[ui.goal]||GOALS[0];
-  const grp={0:[],1:[],2:[],3:[],4:[]};
+  const grp={0:[],1:[],2:[],3:[],4:[],5:[]};
   sorted().forEach(k=>{const e=cur(k.id,g.key);grp[e?e.n:0].push({k,e});});
   const root=h('div',{class:'stack'});
   root.append(h('div',null,
@@ -1415,8 +1434,8 @@ function lijst(){
     h('h2',{text:g.tekst}),
     h('div',{class:'sumline'},h('span',{text:kl().naam+' · '+sorted().length+(sorted().length===1?' leerling':' leerlingen')}),
       h('span',{text:(grp[1].length+grp[2].length)+' met ondersteuning (rood en oranje)'})),
-    bar([0,grp[1].length,grp[2].length,grp[3].length,grp[4].length])));
-  const order=ui.onlyHelp?[1,2]:[1,2,3,4,0];
+    bar([0,grp[1].length,grp[2].length,grp[3].length,grp[4].length,grp[5].length])));
+  const order=ui.onlyHelp?[1,2]:[...LV,0];
   let shown=0;
   order.forEach(n=>{
     if(!grp[n].length)return;shown++;
@@ -1462,7 +1481,7 @@ function matrix(){
         const e=cur(k.id,g.key);if(e&&e.n<=2){help++;tot[ki]++;}
         tr.append(h('td',null,h('button',{type:'button',class:'cell '+(e?'n'+e.n:'none'),'data-fk':'cell:'+k.id+':'+g.key,
           'aria-label':k.naam+', '+g.tekst+': '+(e?NIV[e.n].naam+', '+NIV[e.n].label:'niet ingevuld'),
-          onClick:()=>openPanel(k.id,g.key,'cell:'+k.id+':'+g.key)},e?String(e.n):'')));
+          onClick:()=>openPanel(k.id,g.key,'cell:'+k.id+':'+g.key)},e?String(NIV[e.n].nr):'')));
       });
       tr.append(h('td',{class:'hc'+(help>=3?' hot':''),text:help?String(help):''}));
       tb.append(tr);
@@ -1792,8 +1811,8 @@ function renderPanel(){
   const body=h('div',{class:'pbody'});
   body.append(h('p',{class:'ptitle',text:P.editTs!==null?'Je wijzigt een eerder resultaat.':'Nieuw resultaat toevoegen. Eerdere resultaten blijven bewaard.'}));
   body.append(h('fieldset',null,h('legend',{text:'Niveau'}),
-    h('div',{class:'nvgrid'},NIV.slice(1).map(v=>h('button',{type:'button',class:'nvbtn n'+v.n,'aria-pressed':String(d.n===v.n),'data-fk':'n'+v.n,
-      onClick:()=>{d.n=v.n;renderPanel();}},h('b',{text:String(v.n)}),h('span',{text:v.naam}),h('small',{text:v.label}))))));
+    h('div',{class:'nvgrid'},LV.map(n=>NIV[n]).map(v=>h('button',{type:'button',class:'nvbtn n'+v.n,'aria-pressed':String(d.n===v.n),'data-fk':'n'+v.n,
+      onClick:()=>{d.n=v.n;renderPanel();}},h('b',{text:String(v.nr)}),h('span',{text:v.naam}),h('small',{text:v.label}))))));
   if(help){
     body.append(h('fieldset',null,h('legend',{text:'Waarom lukt het niet goed?'}),
       S.redenen.wis.length?h('div',{class:'chips'},S.redenen.wis.map(r=>h('button',{type:'button',class:'chip','aria-pressed':String(d.r.has(r.id)),'data-fk':'r:'+r.id,
