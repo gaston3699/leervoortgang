@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#2c3748">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap">
 <style>
-/* Concept: een rustige werktafel in koel leisteen. Alleen de vijf niveaukleuren (rood, oranje, geel, groen, blauw) zijn kleurrijk, zodat ze meteen opvallen. */
+/* Concept: een rustige werktafel in koel leisteen. Alleen de vier niveaukleuren (rood, oranje, groen, blauw) zijn kleurrijk, zodat ze meteen opvallen. */
 :root{
   --font-body:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --font-head:'Space Grotesk','Atkinson Hyperlegible',system-ui,sans-serif;
@@ -17,9 +17,7 @@
   --n1:#bf3329; --n1-on:#ffffff; --n1-soft:#fbe5e2;
   --n2:#e98a2c; --n2-on:#2b1600; --n2-soft:#fdeedb;
   --n3:#2c7a3d; --n3-on:#ffffff; --n3-soft:#dff2e3;
-  --n4:#2a63c6; --n4-on:#ffffff; --n4-soft:#e0eaff;
-  --n5:#f2c511; --n5-on:#2b2200; --n5-soft:#fdf4cc;
-  --warn-bg:#fff3d1; --warn-line:#dcb74e; --info-bg:#e4edf7; --info-line:#a9bfd9;
+  --n4:#2a63c6; --n4-on:#ffffff; --n4-soft:#e0eaff;  --warn-bg:#fff3d1; --warn-line:#dcb74e; --info-bg:#e4edf7; --info-line:#a9bfd9;
   --shadow:0 10px 40px rgba(18,28,40,.22);
 }
 @media (prefers-color-scheme: dark){
@@ -29,9 +27,7 @@
     --n1:#f0766b; --n1-on:#220906; --n1-soft:#3b201d;
     --n2:#f4a553; --n2-on:#2b1600; --n2-soft:#3c2b18;
     --n3:#62c673; --n3-on:#08210e; --n3-soft:#183120;
-    --n4:#7ca8f4; --n4-on:#08172f; --n4-soft:#1a2a42;
-  --n5:#f5d54a; --n5-on:#2b2200; --n5-soft:#3a3213;
-    --warn-bg:#3a3014; --warn-line:#8c7425; --info-bg:#1d2b3b; --info-line:#3f5873;
+    --n4:#7ca8f4; --n4-on:#08172f; --n4-soft:#1a2a42;    --warn-bg:#3a3014; --warn-line:#8c7425; --info-bg:#1d2b3b; --info-line:#3f5873;
     --shadow:0 10px 40px rgba(0,0,0,.55);
     color-scheme:dark;
   }
@@ -42,9 +38,7 @@
   --n1:#f0766b; --n1-on:#220906; --n1-soft:#3b201d;
   --n2:#f4a553; --n2-on:#2b1600; --n2-soft:#3c2b18;
   --n3:#62c673; --n3-on:#08210e; --n3-soft:#183120;
-  --n4:#7ca8f4; --n4-on:#08172f; --n4-soft:#1a2a42;
-  --n5:#f5d54a; --n5-on:#2b2200; --n5-soft:#3a3213;
-  --warn-bg:#3a3014; --warn-line:#8c7425; --info-bg:#1d2b3b; --info-line:#3f5873;
+  --n4:#7ca8f4; --n4-on:#08172f; --n4-soft:#1a2a42;  --warn-bg:#3a3014; --warn-line:#8c7425; --info-bg:#1d2b3b; --info-line:#3f5873;
   --shadow:0 10px 40px rgba(0,0,0,.55);
   color-scheme:dark;
 }
@@ -362,18 +356,7 @@ aside h2{font-size:1.15rem}
 .tile.n1{background:var(--n1);color:var(--n1-on)}
 .tile.n2{background:var(--n2);color:var(--n2-on)}
 .tile.n3{background:var(--n3);color:var(--n3-on)}
-.tile.n4{background:var(--n4);color:var(--n4-on)}
-/* Niveau geel (middelmatig), code 5 */
-.seg.n5,.dot.n5{background:var(--n5)}
-.nv.n5{background:var(--n5);color:var(--n5-on)}.nv.n5 b{background:var(--n5-on);color:var(--n5)}
-.cell.n5{background:var(--n5);color:var(--n5-on)}
-.nvbtn.n5 b{background:var(--n5);color:var(--n5-on)}
-.nvbtn[aria-pressed="true"].n5{background:var(--n5-soft);border-color:var(--n5)}
-.qb.n5{border-color:var(--n5)}.qb.n5[aria-pressed="true"]{background:var(--n5);color:var(--n5-on)}
-.lvb.n5{border-color:var(--n5);background:var(--n5-soft)}
-.lvb[aria-pressed="true"].n5{background:var(--n5);color:var(--n5-on)}
-.tile.n5{background:var(--n5);color:var(--n5-on)}
-.tile.none{background:transparent;border:2px dashed var(--line);color:var(--muted);box-shadow:none}
+.tile.n4{background:var(--n4);color:var(--n4-on)}.tile.none{background:transparent;border:2px dashed var(--line);color:var(--muted);box-shadow:none}
 
 /* Domeinen bovenaan */
 .domtabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
@@ -615,11 +598,10 @@ const NIV=[null,
  {n:1,naam:'Rood',label:'Veel ondersteuning'},
  {n:2,naam:'Oranje',label:'Wat ondersteuning'},
  {n:3,naam:'Groen',label:'Goed'},
- {n:4,naam:'Blauw',label:'Zeer goed'},
- {n:5,naam:'Geel',label:'Middelmatig'}];
-/* Volgorde van laag naar hoog. Geel kwam later en heeft daarom code 5, zodat bestaande gegevens (1–4) geldig blijven.
-   Op het scherm is de nummering 1 rood, 2 oranje, 3 geel, 4 groen, 5 blauw. */
-const LV=[1,2,5,3,4];
+ {n:4,naam:'Blauw',label:'Zeer goed'}];
+/* Volgorde van laag naar hoog. Een extra niveau later? Geef het een nieuwe code (bv. 5) en zet die op de juiste plek
+   in LV, zodat bestaande gegevens geldig blijven. nr = het nummer op het scherm. */
+const LV=[1,2,3,4];
 LV.forEach((n,i)=>{NIV[n].nr=i+1;});
 const rank=n=>LV.indexOf(n)+1;
 
@@ -753,7 +735,7 @@ function cleanEntries(arr){
   if(!Array.isArray(arr))return [];
   const out=[];
   for(const e of arr){
-    if(!e||typeof e.d!=='string'||!ISO_RE.test(e.d)||!(e.n>=1&&e.n<=5))continue;
+    if(!e||typeof e.d!=='string'||!ISO_RE.test(e.d)||!NIV[e.n])continue;
     out.push({d:e.d,n:Math.round(e.n),
       r:Array.isArray(e.r)?e.r.filter(x=>typeof x==='string').slice(0,20):[],
       t:typeof e.t==='string'?e.t.slice(0,500):'',
@@ -1281,7 +1263,7 @@ function emptyState(){
     h('ol',null,
       h('li',{text:'Voeg links de voornaam van een leerling toe.'}),
       h('li',{text:'Klik de naam aan en kies een domein, bijvoorbeeld Getallen.'}),
-      h('li',{text:'Klik bij elk leerplandoel het niveau van 1 (rood) tot 5 (blauw).'}),
+      h('li',{text:'Klik bij elk leerplandoel het niveau van 1 (rood) tot 4 (blauw).'}),
       h('li',{text:'Bij rood of oranje kies je meteen waarom het niet goed lukt.'}),
       h('li',{text:'Ga naar Klasoverzicht om te zien wie extra ondersteuning nodig heeft bij een doel.'})),
     S.kinderen.length?null:h('button',{type:'button',class:'btn',onClick:()=>{makeDemo();persist();ui.kind=sorted()[0].id;render();}},'Voorbeeldklas laden'));
@@ -1869,7 +1851,7 @@ function needsBackup(){if(SY.state==='ok')return false;return !S.lastBackup||day
    APP_VERSION moet bij elke aanpassing veranderen. De app kijkt geregeld of op GitHub een andere versie staat.
    Dan verschijnt een melding; komt de gebruiker terug naar de app en is er niets half ingevuld, dan werkt ze zichzelf bij.
    Bijwerken is veilig: alles staat al op het toestel, en wat nog naar Drive moest, gaat na het herladen mee. */
-const APP_VERSION='2026-11-17.3';
+const APP_VERSION='2026-11-17.4';
 let newVersion=null;
 async function checkUpdate(){
   if(!WEB||newVersion||navigator.onLine===false)return;
