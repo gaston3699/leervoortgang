@@ -314,6 +314,28 @@ label.f input,label.f textarea{padding:8px 10px;border:1px solid var(--line);bor
 .tab:hover{color:var(--band-fg)}
 .tab[aria-current="page"]{background:var(--band-act-bg);color:var(--band-act-fg)}
 .top :focus-visible{outline-color:var(--band-fg)}
+.vtab{border:0;background:transparent;color:var(--band-muted);border-radius:10px;padding:8px 18px;font-weight:700;min-height:40px}
+.vtab:hover{color:var(--band-fg)}
+.vtab[aria-pressed="true"]{background:var(--band-act-bg);color:var(--band-act-fg)}
+/* Groepen binnen een leerlijn (Cijferen: Optellen, Aftrekken, …) */
+.grp{border-bottom:1px solid var(--line)}
+.grp:last-child{border-bottom:0}
+.grph{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"chev nm meta" "chev bar bar";column-gap:12px;row-gap:6px;align-items:center;
+  width:100%;text-align:left;background:transparent;border:0;padding:12px 4px;color:var(--fg)}
+.grph:hover{background:var(--surface2)}
+.grph .chev{grid-area:chev;color:var(--muted);transition:transform .15s;display:inline-block;width:1em;text-align:center}
+.grph .grpname{grid-area:nm;font-weight:700;font-size:1.02rem}
+.grph .llmeta{grid-area:meta;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;color:var(--muted)}
+.grph .mini{grid-area:bar;height:6px}
+.grp.open .grph .chev{transform:rotate(90deg)}
+.grows{padding:0 0 6px 26px}
+/* Redenen bij rood/oranje: inklapbaar */
+.rtog{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;width:100%;text-align:left;background:transparent;border:0;padding:2px 0;color:var(--fg)}
+.rtog .chev{color:var(--muted);transition:transform .15s;display:inline-block;width:1em;text-align:center}
+.rsn.open .rtog .chev{transform:rotate(90deg)}
+.rtog .rsum{font-size:.88rem;color:var(--muted)}
+.rtog:hover .rlab{text-decoration:underline}
+@media (prefers-reduced-motion:reduce){.grph .chev,.rtog .chev{transition:none}}
 .logo{display:inline-grid;grid-template-columns:1fr 1fr;gap:3px;width:32px;height:32px;flex:none}
 .logo i{border-radius:6px;display:block}
 .logo i:nth-child(1){background:var(--n1)}
@@ -377,7 +399,7 @@ aside h2{font-size:1.15rem}
 .llh .llname{grid-area:nm;font-family:var(--font-head);font-weight:700;font-size:1.1rem;min-width:0}
 .llh .llmeta{grid-area:meta;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;color:var(--muted)}
 .llh .mini{grid-area:bar;height:7px}
-.ll.open .chev{transform:rotate(90deg)}
+.ll.open .llh .chev{transform:rotate(90deg)}
 .ll.open .llh{border-bottom:1px solid var(--line)}
 .ll .rows{gap:0;padding:0 16px 6px}
 .ll .grow{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:12px 0}
@@ -457,7 +479,8 @@ button.gmeta:hover{background:var(--soft,rgba(127,127,127,.12))}
 
 <div class="wrap">
   <header class="top">
-    <div class="brand"><span class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span><h1>Leervoortgang</h1><span class="sub">Wiskunde · 9 tot 10 jaar</span></div>
+    <div class="brand"><span class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span><h1>Leervoortgang</h1><span class="sub" id="vakSub">Wiskunde · 9 tot 10 jaar</span></div>
+    <nav class="tabs vaktabs" id="vakTabs" aria-label="Vak"></nav>
     <div class="klaspick"><label class="sr" for="klasSel">Klas</label><select id="klasSel"></select><button type="button" class="btn small band" id="klasNew">Nieuwe klas</button></div>
     <nav class="tabs" aria-label="Weergave">
       <button type="button" class="tab" data-view="kind">Per leerling</button>
@@ -537,7 +560,21 @@ const DOMEINEN=[
    [4,"Opgaande deling (door sprongen te tellen of door het deeltal te splitsen)"],
    [10,"Niet-opgaande deling (door sprongen te tellen of door het deeltal te splitsen)"],
    [7,"Herstructureren om een deling uit te voeren"]]],
-  ['get9','Cijferen',[[0,'Optellen'],[3,'Aftrekken'],[1,'Vermenigvuldigen'],[4,'Delen'],[2,'Schatting maken']]],
+  /* Cijferen: doelen in openklapbare groepen. [vaste index, volledige tekst, groep, korte tekst binnen de groep].
+     De oude doelen Optellen (0), Aftrekken (3), Vermenigvuldigen (1) en Delen (4) behouden hun index: hun resultaten
+     staan nu bij 'natuurlijke getallen' (bij vermenigvuldigen en delen: 1a, met/door een E). */
+  ['get9','Cijferen',[
+   [0,'Optellen: natuurlijke getallen','Optellen','1. Natuurlijke getallen'],
+   [5,'Optellen: kommagetallen','Optellen','2. Kommagetallen'],
+   [3,'Aftrekken: natuurlijke getallen','Aftrekken','1. Natuurlijke getallen'],
+   [6,'Aftrekken: kommagetallen','Aftrekken','2. Kommagetallen'],
+   [1,'Vermenigvuldigen: natuurlijke getallen met een E','Vermenigvuldigen','1a. Natuurlijke getallen: vermenigvuldigen met een E'],
+   [7,'Vermenigvuldigen: natuurlijke getallen met een TE','Vermenigvuldigen','1b. Natuurlijke getallen: vermenigvuldigen met een TE'],
+   [8,'Vermenigvuldigen: kommagetallen','Vermenigvuldigen','2. Kommagetallen'],
+   [4,'Delen: natuurlijke getallen door een E','Delen','1a. Natuurlijke getallen: delen door een E'],
+   [9,'Delen: natuurlijke getallen door een TE','Delen','1b. Natuurlijke getallen: delen door een TE'],
+   [10,'Delen: kommagetallen','Delen','2. Kommagetallen'],
+   [2,'Schatting maken']]],
   ['get4','Relaties, breuken, decimale getallen en procenten',[
    'Breuken (noemer tot 20): gelijknamige breuken optellen en aftrekken','Breuken (noemer tot 20): breuk nemen van een getal',
    'Breuken (noemer tot 20): schematische tekening maken','Breuken (noemer tot 20): breuk gelijknamig maken',
@@ -586,13 +623,24 @@ const DOMEINEN=[
   ['str2','Probleemoplossend denken',['Denkstappen en heuristieken toepassen']]
  ]}
 ];
+/* Vakken. Spelling en taal krijgen later hun eigen domeinen (met andere leerlijn-id's dan wiskunde). */
+const VAKKEN=[
+ {id:'wis',naam:'Wiskunde',dom:DOMEINEN},
+ {id:'spe',naam:'Spelling',dom:[]},
+ {id:'taal',naam:'Taal',dom:[]}];
+const VBY={};VAKKEN.forEach(v=>{VBY[v.id]=v;v.dom.forEach(d=>{d.vak=v;});});
 const LL=[];const LLBY={};const GOALS=[];const GBY={};
-DOMEINEN.forEach(d=>d.ll.forEach(([id,naam,doelen])=>{
-  const o={id,naam,doelen,dom:d,goals:[]};LL.push(o);LLBY[id]=o;
-  /* Een doel is een tekst (index = plaats in de lijst) of [vaste index, tekst]. Zo blijven opgeslagen gegevens kloppen als de lijst verandert. */
-  doelen.forEach((item,pos)=>{const i=Array.isArray(item)?item[0]:pos;const tekst=Array.isArray(item)?item[1]:item;
-    const g={key:id+':'+i,ll:o,i,tekst};GOALS.push(g);GBY[g.key]=g;o.goals.push(g);});
-}));
+VAKKEN.forEach(v=>v.dom.forEach(d=>d.ll.forEach(([id,naam,doelen])=>{
+  const o={id,naam,doelen,dom:d,vak:v,goals:[]};LL.push(o);LLBY[id]=o;
+  /* Een doel is een tekst (index = plaats in de lijst) of [vaste index, tekst, groep?, korte tekst?]. Zo blijven opgeslagen gegevens kloppen als de lijst verandert. */
+  doelen.forEach((item,pos)=>{const A=Array.isArray(item);const i=A?item[0]:pos;const tekst=A?item[1]:item;
+    const g={key:id+':'+i,ll:o,i,tekst,grp:A&&item[2]||null,kort:A&&item[3]||tekst};GOALS.push(g);GBY[g.key]=g;o.goals.push(g);});
+})));
+/* Wat bij het gekozen vak hoort */
+const vak=()=>VBY[ui.vak]||VAKKEN[0];
+const vakDoms=()=>vak().dom;
+const vakLL=()=>LL.filter(l=>l.vak===vak());
+const vakGoals=()=>GOALS.filter(g=>g.ll.vak===vak());
 
 const NIV=[null,
  {n:1,naam:'Rood',label:'Veel ondersteuning'},
@@ -1121,7 +1169,7 @@ const rLabel=id=>{const r=S.redenen.wis.find(x=>x.id===id);return r?r.label:'';}
 const rLabels=e=>e?e.r.map(rLabel).filter(Boolean):[];
 function childCounts(kid){
   const c=[0,0,0,0,0,0];
-  GOALS.forEach(g=>{const e=cur(kid,g.key);if(e)c[e.n]++;});
+  vakGoals().forEach(g=>{const e=cur(kid,g.key);if(e)c[e.n]++;});
   return c;
 }
 function helpInDomain(kid,d){
@@ -1196,7 +1244,26 @@ function addKlas(naam){
 /* ---------- Weergavestatus ---------- */
 const ui={view:'kind',kind:null,dom:'get',open:new Set(),hist:new Set(),renaming:false,confirmDel:false,klasMode:'doel',goal:GOALS[0].key,mll:'get1',onlyHelp:false,
   panel:null,pendingImport:null,confirmWipe:false,hideBackupBanner:false,hideMigr:false,
-  newKlas:false,renameKlas:null,confirmKlasDel:null};
+  newKlas:false,renameKlas:null,confirmKlasDel:null,
+  vak:'wis',rsnOpen:null};
+/* Het gekozen vak wordt per toestel onthouden. */
+try{const v=localStorage.getItem('leervoortgang.vak');if(v&&VBY[v])ui.vak=v;}catch(e){}
+function chooseVak(id){
+  if(!VBY[id]||ui.vak===id)return;
+  ui.vak=id;try{localStorage.setItem('leervoortgang.vak',id);}catch(e){}
+  const d=vakDoms();ui.dom=d.length?d[0].id:null;
+  const gs=vakGoals();ui.goal=gs.length?gs[0].key:null;
+  ui.mll='all';ui.panel=null;ui.rsnOpen=null;
+  render();
+}
+function vakLeeg(){
+  return h('div',{class:'card0 empty'},logo(),
+    h('h2',{text:vak().naam+': nog geen doelen'}),
+    h('p',{text:'De leerplandoelen voor '+vak().naam.toLowerCase()+' worden binnenkort toegevoegd.'}));
+}
+(()=>{const d=vakDoms();if(d.length&&!d.some(x=>x.id===ui.dom))ui.dom=d[0].id;
+  const gs=vakGoals();if(gs.length&&!gs.some(g=>g.key===ui.goal))ui.goal=gs[0].key;
+  if(ui.vak!=='wis')ui.mll='all';})();
 /* Back-up als bestand buiten Claude (desktop- en webversie). */
 const desktopDl={async save({filename,data}){
   if(window.showSaveFilePicker){
@@ -1285,7 +1352,7 @@ function viewKind(){
   }else{
     const cc=childCounts(k.id);const ff=cc[1]+cc[2]+cc[3]+cc[4];
     head.append(h('div',{class:'kwho'},avatar(k.naam,'l'),
-      h('div',null,h('h2',{text:k.naam}),h('p',{class:'ksub',text:ff+' van '+GOALS.length+' doelen ingevuld'}))));
+      h('div',null,h('h2',{text:k.naam}),h('p',{class:'ksub',text:vak().naam+' · '+ff+' van '+vakGoals().length+' doelen ingevuld'}))));
   }
   const act=h('div',{class:'actions'});
   if(ui.confirmDel){
@@ -1303,22 +1370,25 @@ function viewKind(){
   }
   head.append(act);
   root.append(head);
+  if(!vakDoms().length){root.append(vakLeeg());return root;}
   const c=childCounts(k.id);const filled=LV.reduce((a,n)=>a+c[n],0);
   root.append(h('div',{class:'tiles'},
     LV.map(n=>h('div',{class:'tile n'+n},h('b',{text:String(c[n])}),h('span',{text:NIV[n].naam+' · '+NIV[n].label}))),
-    h('div',{class:'tile none'},h('b',{text:String(GOALS.length-filled)}),h('span',{text:'Niet ingevuld'}))));
-  root.append(h('div',{class:'domtabs',role:'group','aria-label':'Domein'},DOMEINEN.map(d=>{
+    h('div',{class:'tile none'},h('b',{text:String(vakGoals().length-filled)}),h('span',{text:'Niet ingevuld'}))));
+  root.append(h('div',{class:'domtabs',role:'group','aria-label':'Domein'},vakDoms().map(d=>{
     const n=helpInDomain(k.id,d);
     return h('button',{type:'button',class:'domtab','aria-pressed':String(ui.dom===d.id),onClick:()=>{ui.dom=d.id;render();}},
       h('span',{class:'dn',text:d.naam}),
       h('span',{class:'ds',text:d.ll.length+' leerlijnen'}),
       n?h('span',{class:'hn',title:n+' doelen met rood of oranje'},String(n),h('span',{class:'sr',text:' doelen met ondersteuning'})):null);
   })));
-  const dom=DOMEINEN.find(d=>d.id===ui.dom)||DOMEINEN[0];
-  const allOpen=dom.ll.every(([id])=>ui.open.has(id));
+  const dom=vakDoms().find(d=>d.id===ui.dom)||vakDoms()[0];
+  /* Alles openklappen opent ook de groepen binnen een leerlijn (bv. Optellen bij Cijferen). */
+  const openKeys=[];dom.ll.forEach(([id])=>{openKeys.push(id);grpNames(LLBY[id]).forEach(n=>openKeys.push(grpKey(id,n)));});
+  const allOpen=openKeys.every(x=>ui.open.has(x));
   root.append(h('div',{class:'inl'},
     h('button',{type:'button',class:'btn small','data-fk':'allopen',onClick:()=>{
-      dom.ll.forEach(([id])=>{if(allOpen)ui.open.delete(id);else ui.open.add(id);});render();focusKey('allopen');
+      openKeys.forEach(x=>{if(allOpen)ui.open.delete(x);else ui.open.add(x);});render();focusKey('allopen');
     }},allOpen?'Alles dichtklappen':'Alles openklappen')));
   dom.ll.forEach(([id])=>{
     const l=LLBY[id];const open=ui.open.has(id);
@@ -1333,23 +1403,51 @@ function viewKind(){
         cnt[1]?badge(1,cnt[1]):null,cnt[2]?badge(2,cnt[2]):null),
       miniBar(cnt,l.goals.length,true));
     const sec=h('section',{class:'dom ll'+(open?' open':'')},head);
-    if(open)sec.append(h('div',{class:'rows',id:'ll-'+id},l.goals.map(g=>goalRow(k,g))));
+    if(open)sec.append(h('div',{class:'rows',id:'ll-'+id},llRows(k,l)));
     root.append(sec);
   });
   return root;
 }
-function goalRow(k,g){
+/* Groepen binnen een leerlijn: opeenvolgende doelen met dezelfde 'grp' komen samen onder een openklapbare kop. */
+const grpKey=(llid,naam)=>'grp:'+llid+':'+naam;
+function grpNames(l){const s=[];l.goals.forEach(g=>{if(g.grp&&s.indexOf(g.grp)<0)s.push(g.grp);});return s;}
+function llRows(k,l){
+  const out=[];let i=0;
+  while(i<l.goals.length){
+    const g=l.goals[i];
+    if(!g.grp){out.push(goalRow(k,g));i++;continue;}
+    const gs=[];while(i<l.goals.length&&l.goals[i].grp===g.grp){gs.push(l.goals[i]);i++;}
+    const key=grpKey(l.id,g.grp);const open=ui.open.has(key);
+    const cnt=[0,0,0,0,0,0];gs.forEach(x=>{const e=cur(k.id,x.key);if(e)cnt[e.n]++;});
+    const done=LV.reduce((a,n)=>a+cnt[n],0);
+    const domId='gr-'+l.id+'-'+out.length;
+    out.push(h('div',{class:'grp'+(open?' open':'')},
+      h('button',{type:'button',class:'grph','aria-expanded':String(open),'aria-controls':open?domId:null,'data-fk':key,
+          onClick:()=>{if(open)ui.open.delete(key);else ui.open.add(key);render();focusKey(key);}},
+        h('span',{class:'chev','aria-hidden':'true',text:'▸'}),
+        h('span',{class:'grpname',text:g.grp}),
+        h('span',{class:'llmeta'},h('small',{text:done+' van '+gs.length+' ingevuld'}),
+          cnt[1]?badge(1,cnt[1]):null,cnt[2]?badge(2,cnt[2]):null),
+        miniBar(cnt,gs.length,true)),
+      open?h('div',{class:'grows',id:domId},gs.map(x=>goalRow(k,x,x.kort))):null));
+  }
+  return out;
+}
+function goalRow(k,g,label){
   const e=cur(k.id,g.key);const t=today();const hk=k.id+'|'+g.key;const hopen=ui.hist.has(hk);
   const lv=h('div',{class:'lv',role:'group','aria-label':'Niveau voor '+g.tekst},
     LV.map(n=>h('button',{type:'button',class:'lvb n'+n,'aria-pressed':String(!!e&&e.n===n),
       'aria-label':'Niveau '+NIV[n].nr+', '+NIV[n].naam+', '+NIV[n].label,title:NIV[n].naam+': '+NIV[n].label,'data-fk':'lv:'+g.key+':'+n,
       onClick:()=>{
-        const ne=setLevel(k.id,g.key,n);render();focusKey('lv:'+g.key+':'+n);
+        const ne=setLevel(k.id,g.key,n);
+        /* Bij rood of oranje klapt de redenenlijst van dit doel open; alle andere klappen dicht. */
+        ui.rsnOpen=n<=2?hk:null;
+        render();focusKey('lv:'+g.key+':'+n);
         toast('Resultaat toegevoegd: '+NIV[n].naam.toLowerCase(),{label:'Ongedaan maken',fn:()=>{removeEntry(k.id,g.key,ne.ts);persist();render();focusKey('lv:'+g.key+':'+n);}});
       }},String(NIV[n].nr))));
   const wrap=h('div',{class:'grow'});
   wrap.append(h('div',{class:'gmain'},
-    h('button',{type:'button',class:'gtext','data-fk':'gt:'+g.key,title:'Nieuw resultaat met notitie of datum',onClick:()=>openPanel(k.id,g.key,'gt:'+g.key)},g.tekst),
+    h('button',{type:'button',class:'gtext','data-fk':'gt:'+g.key,title:'Nieuw resultaat met notitie of datum',onClick:()=>openPanel(k.id,g.key,'gt:'+g.key)},label||g.tekst),
     lv,
     e?h('button',{type:'button',class:'gmeta','data-fk':'hv:'+g.key,'aria-expanded':String(hopen),title:'Alle resultaten tonen of verbergen',
         onClick:()=>{if(ui.hist.has(hk))ui.hist.delete(hk);else ui.hist.add(hk);render();focusKey('hv:'+g.key);}},
@@ -1357,12 +1455,20 @@ function goalRow(k,g){
         h('span',{class:'cnt'},'×'+entries(k.id,g.key).length,h('span',{class:'sr',text:' resultaten. Toon verloop'})))
       :h('span',{class:'gmeta'})));
   if(e&&e.n<=2){
-    wrap.append(h('div',{class:'rsn'},
-      h('span',{class:'rlab',text:'Waarom lukt het niet goed?'}),
-      S.redenen.wis.length
+    /* Redenen: standaard ingeklapt (alleen de gekozen redenen als korte tekst); openklappen om te kiezen. */
+    const ropen=ui.rsnOpen===hk;const gekozen=rLabels(e);
+    const rs=h('div',{class:'rsn'+(ropen?' open':'')},
+      h('button',{type:'button',class:'rtog','aria-expanded':String(ropen),'data-fk':'rt:'+g.key,
+          onClick:()=>{ui.rsnOpen=ropen?null:hk;render();focusKey('rt:'+g.key);}},
+        h('span',{class:'chev','aria-hidden':'true',text:'▸'}),
+        h('span',{class:'rlab',text:'Waarom lukt het niet goed?'}),
+        h('span',{class:'rsum',text:gekozen.length?gekozen.join(' · '):'Nog geen reden gekozen'})));
+    if(ropen)rs.append(S.redenen.wis.length
         ?h('div',{class:'chips'},S.redenen.wis.map(r=>h('button',{type:'button',class:'chip sm','aria-pressed':String(e.r.indexOf(r.id)>=0),'data-fk':'rs:'+g.key+':'+r.id,
             onClick:()=>{toggleReason(k.id,g.key,r.id);render();focusKey('rs:'+g.key+':'+r.id);}},r.label)))
-        :h('span',{class:'note',text:'Er zijn geen redenen. Voeg ze toe bij Instellingen.'})));
+        :h('span',{class:'note',text:'Er zijn geen redenen. Voeg ze toe bij Instellingen.'}),
+      h('div',null,h('button',{type:'button',class:'btn small','data-fk':'rc:'+g.key,onClick:()=>{ui.rsnOpen=null;render();focusKey('rt:'+g.key);}},'Klaar')));
+    wrap.append(rs);
   }
   if(e&&e.t)wrap.append(h('div',{class:'note',text:e.t}));
   if(e&&hopen){
@@ -1379,19 +1485,20 @@ function goalRow(k,g){
 /* ---------- Weergave: klasoverzicht ---------- */
 function viewKlas(){
   if(!sorted().length)return emptyState();
+  if(!vakDoms().length)return vakLeeg();
   const root=h('div',{class:'stack'});
   const tb=h('div',{class:'toolbar'});
   const doel=ui.klasMode==='doel';
   tb.append(h('div',{class:'seg2',role:'group','aria-label':'Soort overzicht'},
     h('button',{type:'button','aria-pressed':String(doel),onClick:()=>{ui.klasMode='doel';render();}},'Per leerplandoel'),
     h('button',{type:'button','aria-pressed':String(!doel),onClick:()=>{ui.klasMode='matrix';render();}},'Overzicht per leerlijn')));
-  const keys=doel?GOALS.map(g=>g.key):['all'].concat(LL.map(l=>l.id));
+  const keys=doel?vakGoals().map(g=>g.key):['all'].concat(vakLL().map(l=>l.id));
   const cv=doel?ui.goal:ui.mll;
   const idx=keys.indexOf(cv);
   const set=v=>{if(doel)ui.goal=v;else ui.mll=v;render();};
   const sel=h('select',{id:'selDoel','aria-label':doel?'Leerplandoel':'Leerlijn',onChange:ev=>set(ev.target.value)});
   if(!doel)sel.append(h('option',{value:'all',selected:cv==='all'},'Alle leerlijnen'));
-  DOMEINEN.forEach(d=>{
+  vakDoms().forEach(d=>{
     if(doel){
       d.ll.forEach(([id])=>{const l=LLBY[id];
         sel.append(h('optgroup',{label:d.naam+' · '+l.naam},l.goals.map(g=>h('option',{value:g.key,selected:g.key===cv},g.tekst))));});
@@ -1407,7 +1514,7 @@ function viewKlas(){
   return root;
 }
 function lijst(){
-  const g=GBY[ui.goal]||GOALS[0];
+  const g=(GBY[ui.goal]&&GBY[ui.goal].ll.vak===vak())?GBY[ui.goal]:vakGoals()[0];
   const grp={0:[],1:[],2:[],3:[],4:[],5:[]};
   sorted().forEach(k=>{const e=cur(k.id,g.key);grp[e?e.n:0].push({k,e});});
   const root=h('div',{class:'stack'});
@@ -1441,7 +1548,7 @@ function lijst(){
 function matrix(){
   const ks=sorted();
   const multi=ui.mll==='all';
-  const lls=multi?LL:[LLBY[ui.mll]||LL[0]];
+  const lls=multi?vakLL():[(LLBY[ui.mll]&&LLBY[ui.mll].vak===vak())?LLBY[ui.mll]:vakLL()[0]];
   const wrap=h('div',{class:'mwrap'});
   const t=h('table',{class:'matrix'});
   const hr=h('tr',null,h('th',{class:'rl',scope:'col',text:'Leerplandoel'}));
@@ -1685,8 +1792,9 @@ const FLUO='background-color:#ffff00';
 function rapDoc(k,from,to){
   const items=rapItems(k.id,from,to);
   const per=from?'Nieuw sinds '+fmtDay(from):'Alle gegevens tot '+fmtDay(to);
-  const H=['<p><b>'+esc(k.naam)+' · Wiskunde</b><br>'+esc(per)+'</p>'];
-  const T=[k.naam+' · Wiskunde',per,''];
+  const vk=[...new Set(items.map(it=>it.g.ll.vak.naam))].join(', ')||vak().naam;
+  const H=['<p><b>'+esc(k.naam)+' · '+esc(vk)+'</b><br>'+esc(per)+'</p>'];
+  const T=[k.naam+' · '+vk,per,''];
   let ll=null,lines=[],tl=[];
   const flush=()=>{if(!ll)return;H.push('<p><b>'+esc(ll.dom.naam+' · '+ll.naam)+'</b><br>'+lines.join('<br>')+'</p>');T.push(ll.dom.naam+' · '+ll.naam,...tl,'');};
   items.forEach(it=>{
@@ -1851,7 +1959,7 @@ function needsBackup(){if(SY.state==='ok')return false;return !S.lastBackup||day
    APP_VERSION moet bij elke aanpassing veranderen. De app kijkt geregeld of op GitHub een andere versie staat.
    Dan verschijnt een melding; komt de gebruiker terug naar de app en is er niets half ingevuld, dan werkt ze zichzelf bij.
    Bijwerken is veilig: alles staat al op het toestel, en wat nog naar Drive moest, gaat na het herladen mee. */
-const APP_VERSION='2026-11-17.4';
+const APP_VERSION='2026-11-24.1';
 let newVersion=null;
 async function checkUpdate(){
   if(!WEB||newVersion||navigator.onLine===false)return;
@@ -1915,6 +2023,12 @@ function renderKlasPick(){
       h('button',{type:'button',class:'btn small',onClick:()=>{ui.newKlas=false;render();}},'Annuleer')));
   }
 }
+function renderVak(){
+  const nav=$('#vakTabs');nav.replaceChildren();
+  VAKKEN.forEach(v=>nav.append(h('button',{type:'button',class:'vtab','aria-pressed':String(v.id===ui.vak),'data-fk':'vak:'+v.id,
+    onClick:()=>{chooseVak(v.id);focusKey('vak:'+v.id);}},v.naam)));
+  $('#vakSub').textContent=vak().naam+' · 9 tot 10 jaar';
+}
 function renderSide(){
   const n=sorted().length;
   $('#klasNaam').textContent=kl().naam;
@@ -1928,7 +2042,7 @@ function renderSide(){
       onClick:()=>{ui.kind=k.id;ui.renaming=false;ui.confirmDel=false;render();}},
       avatar(k.naam),
       h('span',{class:'kname',text:k.naam}),
-      miniBar(c,GOALS.length,false),
+      miniBar(c,vakGoals().length,false),
       h('span',{class:'kbadges'},c[1]?badge(1,c[1]):null,c[2]?badge(2,c[2]):null))));
   });
 }
@@ -1936,7 +2050,7 @@ function render(){
   const y=window.scrollY;
   document.querySelectorAll('.tab').forEach(b=>{if(b.dataset.view===ui.view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   $('.shell').dataset.view=ui.view;
-  renderKlasPick();renderBanner();renderSide();
+  renderVak();renderKlasPick();renderBanner();renderSide();
   const v=ui.view==='kind'?viewKind():ui.view==='klas'?viewKlas():viewInst();
   $('#main').replaceChildren(v);
   renderPanel();
