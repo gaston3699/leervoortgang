@@ -647,11 +647,44 @@ const DOM_SPE=[
    [2,'Andere delen in de zin (wat, waar, …)']]]
  ]}
 ];
-/* Vakken. Taal krijgt later zijn eigen domeinen (met andere leerlijn-id's dan wiskunde en spelling). */
+/* ---------- Leerplandata taal ---------- */
+const DOM_TAAL=[
+ {id:'tal',naam:'Taal',ll:[
+  ['tal1','Soorten woorden',[
+   [0,'Samenstellingen'],
+   [1,'Afleidingen (voorzetsel, achterzetsel, …)'],
+   [2,'Synoniemen'],
+   [3,'Antoniemen'],
+   [4,'Zelfstandig naamwoord'],
+   [5,'Bijvoeglijk naamwoord'],
+   [6,'Lidwoord'],
+   [7,'Trappen van vergelijking'],
+   [8,'Figuurlijk taalgebruik: vaak voorkomende spreekwoorden en uitdrukkingen']]],
+  ['tal2','Taalsysteem',[
+   [0,'Verschil korte en lange klank'],
+   [1,'Verschil klinker en medeklinker'],
+   [2,'Spelling: leestekens correct gebruiken','Spelling','Leestekens correct gebruiken'],
+   [3,'Spelling: aanhalingstekens correct gebruiken','Spelling','Aanhalingstekens correct gebruiken'],
+   [4,'Spelling: relatie enkelvoud – meervoud','Spelling','Relatie enkelvoud – meervoud'],
+   [5,'Spelling: werkwoordstijden, tegenwoordige tijd','Spelling','Werkwoordstijden: tegenwoordige tijd'],
+   [6,'Spelling: werkwoordstijden, verleden tijd','Spelling','Werkwoordstijden: verleden tijd']]],
+  ['tal3','Zinnen en zinsdelen',[
+   [0,'Onderwerp'],
+   [1,'Persoonsvorm'],
+   [2,'Gezegde'],
+   [3,'Soorten zinnen: mededelende zin, vragende zin, uitroepende zin']]],
+  ['tal4','Begrijpend lezen',[
+   [0,'W- en H-vragen uit de tekst halen'],
+   [1,'Strategie inzetten bij moeilijke woorden (vragen, opzoeken, …)'],
+   [2,'Hoofdgedachte formuleren'],
+   [3,'Voorspellen a.d.h.v. een prent of een inleiding']]]
+ ]}
+];
+/* Vakken. Elk vak heeft eigen leerlijn-id's (get…, spe…, tal…), zodat opgeslagen gegevens nooit door elkaar lopen. */
 const VAKKEN=[
  {id:'wis',naam:'Wiskunde',dom:DOMEINEN},
  {id:'spe',naam:'Spelling',dom:DOM_SPE},
- {id:'taal',naam:'Taal',dom:[]}];
+ {id:'taal',naam:'Taal',dom:DOM_TAAL}];
 const VBY={};VAKKEN.forEach(v=>{VBY[v.id]=v;v.dom.forEach(d=>{d.vak=v;});});
 const LL=[];const LLBY={};const GOALS=[];const GBY={};
 VAKKEN.forEach(v=>v.dom.forEach(d=>d.ll.forEach(([id,naam,doelen])=>{
@@ -1983,7 +2016,7 @@ function needsBackup(){if(SY.state==='ok')return false;return !S.lastBackup||day
    APP_VERSION moet bij elke aanpassing veranderen. De app kijkt geregeld of op GitHub een andere versie staat.
    Dan verschijnt een melding; komt de gebruiker terug naar de app en is er niets half ingevuld, dan werkt ze zichzelf bij.
    Bijwerken is veilig: alles staat al op het toestel, en wat nog naar Drive moest, gaat na het herladen mee. */
-const APP_VERSION='2026-11-24.2';
+const APP_VERSION='2026-11-24.3';
 let newVersion=null;
 async function checkUpdate(){
   if(!WEB||newVersion||navigator.onLine===false)return;
