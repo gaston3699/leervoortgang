@@ -623,10 +623,34 @@ const DOMEINEN=[
   ['str2','Probleemoplossend denken',['Denkstappen en heuristieken toepassen']]
  ]}
 ];
-/* Vakken. Spelling en taal krijgen later hun eigen domeinen (met andere leerlijn-id's dan wiskunde). */
+/* ---------- Leerplandata spelling ---------- */
+const DOM_SPE=[
+ {id:'spe',naam:'Spelling',ll:[
+  ['spe1','Woorden juist schrijven',[
+   [0,'Hoofdletters bij namen van personen, boeken en films, plaatsen en landen, feestdagen en talen'],
+   [1,'Verenkelen'],
+   [2,'Verdubbelen'],
+   [3,'Woorden met een doffe e-klank (bv. me, gevaar, innerlijk, tekenen, kinderen)'],
+   [4,'Woorden met ei/ij, ou/au, eu en ui'],
+   [5,'Woorden met aai, oei, ooi, eeuw en ieuw'],
+   [6,'Woorden met meerdere medeklinkers na elkaar, vooraan, in het midden of achteraan'],
+   [7,'Woorden die eindigen op -b/-p, -d/-t en -g/-ch'],
+   [8,'Woorden met -ng en -nk'],
+   [9,"Meervouden op -s, -'s, -en en -eren"]]],
+  ['spe2','Werkwoordspelling',[
+   [0,'Werkwoorden in de tegenwoordige tijd juist spellen'],
+   [1,'Sterke werkwoorden in de verleden tijd juist spellen'],
+   [2,'Zinnen en teksten schrijven met een goede zinsbouw, hoofdletters en leestekens']]],
+  ['spe3','Zinsontleding',[
+   [0,'Onderwerp'],
+   [1,'Persoonsvorm'],
+   [2,'Andere delen in de zin (wat, waar, …)']]]
+ ]}
+];
+/* Vakken. Taal krijgt later zijn eigen domeinen (met andere leerlijn-id's dan wiskunde en spelling). */
 const VAKKEN=[
  {id:'wis',naam:'Wiskunde',dom:DOMEINEN},
- {id:'spe',naam:'Spelling',dom:[]},
+ {id:'spe',naam:'Spelling',dom:DOM_SPE},
  {id:'taal',naam:'Taal',dom:[]}];
 const VBY={};VAKKEN.forEach(v=>{VBY[v.id]=v;v.dom.forEach(d=>{d.vak=v;});});
 const LL=[];const LLBY={};const GOALS=[];const GBY={};
@@ -1959,7 +1983,7 @@ function needsBackup(){if(SY.state==='ok')return false;return !S.lastBackup||day
    APP_VERSION moet bij elke aanpassing veranderen. De app kijkt geregeld of op GitHub een andere versie staat.
    Dan verschijnt een melding; komt de gebruiker terug naar de app en is er niets half ingevuld, dan werkt ze zichzelf bij.
    Bijwerken is veilig: alles staat al op het toestel, en wat nog naar Drive moest, gaat na het herladen mee. */
-const APP_VERSION='2026-11-24.1';
+const APP_VERSION='2026-11-24.2';
 let newVersion=null;
 async function checkUpdate(){
   if(!WEB||newVersion||navigator.onLine===false)return;
