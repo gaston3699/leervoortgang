@@ -1,7 +1,7 @@
 {
-  "name": "Leervoortgang",
-  "short_name": "Leervoortgang",
-  "description": "De leervooruitgang van je leerlingen bijhouden (wiskunde, 9 tot 10 jaar).",
+  "name": "niene's zorggroepje <3",
+  "short_name": "zorggroepje",
+  "description": "De leervooruitgang van je leerlingen bijhouden (wiskunde, spelling en taal, 9 tot 10 jaar).",
   "lang": "nl",
   "start_url": "./",
   "scope": "./",

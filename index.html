@@ -2,7 +2,7 @@
 <html lang="nl">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Leervoortgang</title>
+<title>niene's zorggroepje &lt;3</title>
 <link rel="icon" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2c3748">
@@ -479,7 +479,7 @@ button.gmeta:hover{background:var(--soft,rgba(127,127,127,.12))}
 
 <div class="wrap">
   <header class="top">
-    <div class="brand"><span class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span><h1>Leervoortgang</h1><span class="sub" id="vakSub">Wiskunde · 9 tot 10 jaar</span></div>
+    <div class="brand"><span class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span><h1>niene's zorggroepje &lt;3</h1><span class="sub" id="vakSub">Wiskunde · 9 tot 10 jaar</span></div>
     <nav class="tabs vaktabs" id="vakTabs" aria-label="Vak"></nav>
     <div class="klaspick"><label class="sr" for="klasSel">Klas</label><select id="klasSel"></select><button type="button" class="btn small band" id="klasNew">Nieuwe klas</button></div>
     <nav class="tabs" aria-label="Weergave">
@@ -931,6 +931,8 @@ function persist(){persistLocal();syncMark();}
    - WEB: online (GitHub Pages) → bewaren in Google Drive als GOOGLE_CLIENT_ID ingevuld is. */
 const DESKTOP=location.protocol==='file:';
 const WEB=!DESKTOP&&!(window.claude&&window.claude.use)&&/^https?:$/.test(location.protocol);
+/* Naam van de app zoals de gebruiker ze ziet (ook in <title>, <h1> en manifest.webmanifest aanpassen). */
+const APP_NAME="niene's zorggroepje <3";
 const SYNC_KEY='leervoortgang.sync';
 const SY={col:null,state:'local',docs:{},ready:false,busy:false,again:false,timer:null,retry:null};
 try{const x=JSON.parse(localStorage.getItem(SYNC_KEY)||'null');if(x&&x.docs&&typeof x.docs==='object')SY.docs=x.docs;}catch(e){}
@@ -1037,6 +1039,7 @@ function setSync(st){
    hierboven (meta + één per leerling, elk met tijdstempel u). Bij verschil wint per document de nieuwste versie.
    De app heeft enkel toegang tot bestanden die ze zelf maakte (scope drive.file), niet tot de rest van de Drive. */
 const GOOGLE_CLIENT_ID='515676555414-dtjhd41h9j93e6ip2j7ljpv18foqq2im.apps.googleusercontent.com'; // ← Plak hier de Client ID uit Google Cloud (zie HANDLEIDING.md), tussen de aanhalingstekens.
+/* Let op: DRIVE_FILE niet hernoemen (ook niet bij een nieuwe app-naam), anders vindt de app het bestaande bestand in Drive niet meer. */
 const DRIVE_FILE='Leervoortgang - gegevens (niet wijzigen).json';
 const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.file';
 const DRIVE_KEY='leervoortgang.drive',TOKEN_KEY='leervoortgang.driveToken';
@@ -1325,7 +1328,7 @@ function vakLeeg(){
 const desktopDl={async save({filename,data}){
   if(window.showSaveFilePicker){
     let fh;
-    try{fh=await window.showSaveFilePicker({suggestedName:filename,types:[{description:'Back-up Leervoortgang',accept:{'application/json':['.json']}}]});}
+    try{fh=await window.showSaveFilePicker({suggestedName:filename,types:[{description:'Back-up '+APP_NAME,accept:{'application/json':['.json']}}]});}
     catch(e){if(e&&e.name==='AbortError'){const x=new Error('declined');x.code='declined';throw x;}fh=null;}
     if(fh){const w=await fh.createWritable();await w.write(data);await w.close();return;}
   }
@@ -1679,7 +1682,7 @@ function syncLine(){
 }
 let installEvt=null;
 window.addEventListener('beforeinstallprompt',ev=>{ev.preventDefault();installEvt=ev;if(ui.view==='inst')render();});
-window.addEventListener('appinstalled',()=>{installEvt=null;if(ui.view==='inst')render();toast('Leervoortgang is geïnstalleerd');});
+window.addEventListener('appinstalled',()=>{installEvt=null;if(ui.view==='inst')render();toast(APP_NAME+' is geïnstalleerd');});
 function driveSection(){
   const sec=h('section',{class:'card0 set'});
   sec.append(h('h2',{text:'Google Drive'}),syncLine());
@@ -1701,7 +1704,7 @@ function installSection(){
   if(!WEB||standalone)return null;
   const sec=h('section',{class:'card0 set'});
   sec.append(h('h2',{text:'App installeren'}));
-  if(installEvt)sec.append(h('p',{text:'Installeer Leervoortgang als app op dit toestel. Je vindt ze dan tussen je andere apps, in een eigen venster, en ze werkt ook zonder internet.'}),
+  if(installEvt)sec.append(h('p',{text:'Installeer '+APP_NAME+' als app op dit toestel. Je vindt ze dan tussen je andere apps, in een eigen venster, en ze werkt ook zonder internet.'}),
     h('div',{class:'inl'},h('button',{type:'button',class:'btn primary',onClick:async()=>{const e=installEvt;installEvt=null;e.prompt();try{await e.userChoice;}catch(x){}render();}},'Installeer als app')));
   else sec.append(h('p',{text:'Installeren als app: klik in Chrome of Edge rechts in de adresbalk op het icoon "Installeren" (een schermpje met een pijltje), of via het menu ⋮ → "Opslaan en delen" / "Apps" → "Installeren".'}));
   return sec;
@@ -2016,7 +2019,7 @@ function needsBackup(){if(SY.state==='ok')return false;return !S.lastBackup||day
    APP_VERSION moet bij elke aanpassing veranderen. De app kijkt geregeld of op GitHub een andere versie staat.
    Dan verschijnt een melding; komt de gebruiker terug naar de app en is er niets half ingevuld, dan werkt ze zichzelf bij.
    Bijwerken is veilig: alles staat al op het toestel, en wat nog naar Drive moest, gaat na het herladen mee. */
-const APP_VERSION='2026-11-24.3';
+const APP_VERSION='2026-11-24.4';
 let newVersion=null;
 async function checkUpdate(){
   if(!WEB||newVersion||navigator.onLine===false)return;
