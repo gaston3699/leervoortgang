@@ -576,13 +576,16 @@ const DOMEINEN=[
    [10,'Delen: kommagetallen','Delen','2. Kommagetallen'],
    [2,'Schatting maken']]],
   ['get4','Relaties, breuken, decimale getallen en procenten',[
-   'Breuken (noemer tot 20): gelijknamige breuken optellen en aftrekken','Breuken (noemer tot 20): breuk nemen van een getal',
-   'Breuken (noemer tot 20): schematische tekening maken','Breuken (noemer tot 20): breuk gelijknamig maken',
-   'Breuken (noemer tot 20): gelijkwaardige breuken zoeken','Breuken (noemer tot 20): breuk vinden',
-   'Breuken (noemer tot 20): geheel zoeken met schema',
-   'Verband tussen breuk en decimale vorm (1/2, 1/4, 3/4, 1/5, 1/10, 1/100)',
-   'Kommagetallen tot 1 duizendste: lezen','Kommagetallen tot 1 duizendste: doortellen en terugtellen',
-   'Kommagetallen tot 1 duizendste: op de getallenas','Kommagetallen tot 1 duizendste: splitsen']],
+   [0,'Breuken (noemer tot 20): gelijknamige breuken optellen en aftrekken'],[1,'Breuken (noemer tot 20): breuk nemen van een getal'],
+   [2,'Breuken (noemer tot 20): schematische tekening maken'],[3,'Breuken (noemer tot 20): breuk gelijknamig maken'],
+   [4,'Breuken (noemer tot 20): gelijkwaardige breuken zoeken'],[5,'Breuken (noemer tot 20): breuk vinden'],
+   [6,'Breuken (noemer tot 20): geheel zoeken met schema'],
+   [12,'Breuken (noemer tot 20): geheel omzetten in een breuk'],
+   [13,'Breuken (noemer tot 20): schematische tekening omzetten in een (bewerking met) breuken'],
+   [14,'Breuken (noemer tot 20): breuk vereenvoudigen tot de kleinste vorm'],
+   [7,'Verband tussen breuk en decimale vorm (1/2, 1/4, 3/4, 1/5, 1/10, 1/100)'],
+   [8,'Kommagetallen tot 1 duizendste: lezen'],[9,'Kommagetallen tot 1 duizendste: doortellen en terugtellen'],
+   [10,'Kommagetallen tot 1 duizendste: op de getallenas'],[11,'Kommagetallen tot 1 duizendste: splitsen']]],
   ['get5','Afronden en schatten',['Omgekeerde bewerking','Correct afronden']],
   ['get6','Patronen',['Herhalende of veranderende patronen herkennen en verderzetten']],
   ['get7','Tabellen, grafieken en statistiek',['Staafdiagram opmaken','Informatie uit grafieken en tabellen halen']],
@@ -638,6 +641,9 @@ const DOM_SPE=[
    [8,'Woorden met -ng en -nk'],
    [9,"Meervouden op -s, -'s, -en en -eren"]]],
   ['spe2','Werkwoordspelling',[
+   [3,'Persoonsvorm in de zin vinden'],
+   [4,'Persoonsvorm correct aanpassen aan het onderwerp'],
+   [5,'Onderscheid maken tussen tegenwoordige tijd en verleden tijd'],
    [0,'Werkwoorden in de tegenwoordige tijd juist spellen'],
    [1,'Sterke werkwoorden in de verleden tijd juist spellen'],
    [2,'Zinnen en teksten schrijven met een goede zinsbouw, hoofdletters en leestekens']]],
@@ -2019,7 +2025,7 @@ function needsBackup(){if(SY.state==='ok')return false;return !S.lastBackup||day
    APP_VERSION moet bij elke aanpassing veranderen. De app kijkt geregeld of op GitHub een andere versie staat.
    Dan verschijnt een melding; komt de gebruiker terug naar de app en is er niets half ingevuld, dan werkt ze zichzelf bij.
    Bijwerken is veilig: alles staat al op het toestel, en wat nog naar Drive moest, gaat na het herladen mee. */
-const APP_VERSION='2026-11-24.5';
+const APP_VERSION='2026-11-25.1';
 let newVersion=null;
 async function checkUpdate(){
   if(!WEB||newVersion||navigator.onLine===false)return;
